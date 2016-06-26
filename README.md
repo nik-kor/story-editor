@@ -15,4 +15,4 @@ Tested in Google-chrome@51
 * test reducers
 
 
-The app didn't support IE8 because we habe to polifill Range-api.
+The app didn't support IE8 because we have to polifill Range-api.

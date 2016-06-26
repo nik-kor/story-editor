@@ -1,0 +1,17 @@
+.app {
+    font-family: Roboto,Arial,sans;
+    width: 100%;
+    display: flex;
+
+    &__text {
+        border-right: 1px solid rgba(128, 128, 128, .3);
+        width: 70%;
+        height: 100%;
+		padding: 10px;
+    }
+
+    &__comments {
+        position: relative;
+        width: 30%;
+    }
+}

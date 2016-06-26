@@ -1,0 +1,38 @@
+{
+  "name": "inkitt-app",
+  "version": "1.0.0",
+  "description": "- highlight selected text if user click on textarea  - open textarea against selected text  - add save button   - save to localStorage  - render already added comments",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "webpack-dev-server --hot --inline",
+    "build": "webpack"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bem-cn": "^2.1.2",
+    "node-uuid": "^1.4.7",
+    "react": "^15.1.0",
+    "react-dom": "^15.1.0",
+    "react-redux": "^4.4.5",
+    "redux": "^3.5.2"
+  },
+  "devDependencies": {
+    "autoprefixer": "^6.3.6",
+    "babel-core": "^6.10.4",
+    "babel-loader": "^6.2.4",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-react": "^6.5.0",
+    "css-loader": "^0.23.1",
+    "optimist": "^0.6.1",
+    "postcss-custom-properties": "^5.0.1",
+    "postcss-loader": "^0.9.1",
+    "postcss-nested": "^1.0.0",
+    "react": "^15.1.0",
+    "redux-logger": "^2.6.1",
+    "style-loader": "^0.13.1",
+    "webpack": "^1.13.1",
+    "webpack-dev-server": "^1.14.1"
+  }
+}

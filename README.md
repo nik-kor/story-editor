@@ -4,7 +4,7 @@ https://story-editor.herokuapp.com/
 
 Tested in Google-chrome@51
 
-# TODO
+## TODO
 
 * handle few comments on the same text block
  - use pictograms and different colors

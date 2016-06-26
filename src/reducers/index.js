@@ -4,6 +4,7 @@ import {
     MUTE_COMMENT,
     COMMENT_TEXT_CHANGED,
     ADD_COMMENT,
+    SAVED_TO_STORAGE,
 } from '../actions';
 
 const uuid = require('node-uuid');
@@ -17,6 +18,7 @@ export const reducer = function(state, action) {
         case MUTE_COMMENT: return onMuteComment(state, action);
         case COMMENT_TEXT_CHANGED: return onCommentTextChanged(state, action);
         case ADD_COMMENT: return onAddComment(state, action);
+        case SAVED_TO_STORAGE: return onSavedToStorage(state, action);
         default: return state;
     }
 
@@ -55,5 +57,9 @@ export const reducer = function(state, action) {
 
     function onMuteComment(state, action) {
         return Object.assign({}, state, { activeComment: null });
+    }
+
+    function onSavedToStorage(state, action) {
+        return Object.assign({}, state, { savedToStorageAt: action.savedToStorageAt });
     }
 };

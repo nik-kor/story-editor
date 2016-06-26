@@ -1,4 +1,13 @@
 var path = require('path');
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var isBuild = process.env.IS_BUILD;
+
+var plugins = [];
+if (isBuild) {
+    extractCss = new ExtractTextPlugin('styles.css')
+    plugins = [ extractCss ];
+}
+
 module.exports = {
 	entry: {
 		app: ['./src/entry.js']
@@ -13,14 +22,22 @@ module.exports = {
 	},
 	module: {
 		loaders: [
-			{
-				test: /\.css$/,
-				loader: [
-					'style-loader',
-					'css-loader?sourceMap',
-					'postcss-loader'
-				].join('!')
-			},
+            isBuild
+                ? {
+                    test: /\.css$/,
+                    loader: extractCss.extract(
+                        'style-loader',
+                        'css-loader!postcss-loader'
+                    ),
+                }
+                : {
+                    test: /\.css$/,
+                    loader: [
+                        'style-loader',
+                        'css-loader?sourceMap',
+                        'postcss-loader'
+                    ].join('!')
+                },
 	 		{
 				test: /\.jsx?$/,
 				exclude: /node_modules/,
@@ -47,5 +64,6 @@ module.exports = {
 		require('postcss-nested'),
 		require('postcss-custom-properties'),
 		require('autoprefixer'),
-	]
+	],
+    plugins: plugins,
 };

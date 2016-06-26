@@ -1,5 +1,3 @@
-console.log('hi there');
-//
 import React from 'react';
 import logger from 'redux-logger'
 import ReactDOM from 'react-dom';

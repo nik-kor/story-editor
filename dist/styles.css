@@ -1,0 +1,65 @@
+.text__highlight {
+    background-color: rgba(97,255,160,.8);
+}
+.comment {
+    position: absolute;
+    top: 30px;
+    left: 10px;
+
+    border-bottom: 1px dotted;
+    z-index: 100;
+    cursor: pointer;
+}
+.comment__link {
+    text-decoration: none;
+}
+.comment-popup {
+    position: absolute;
+    top: 30px;
+    left: 10px;
+    display: none;
+    z-index: 110;
+    border: 1px solid rgba(128, 128, 128, .5);
+    padding: 10px;
+    border-radius: 4px;
+    background: white;
+    -webkit-transition: top 0.5s ease;
+    transition: top 0.5s ease;
+}
+.comment-popup_opened {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+}
+.comment-popup__comment {
+    width: 200px;
+    height: 80px;
+}
+.comment-popup__save {
+    width: 60px;
+    height: 30px;
+    margin-top: 10px
+}
+.app {
+    font-family: Roboto,Arial,sans;
+    width: 100%;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+}
+.app__text {
+    border-right: 1px solid rgba(128, 128, 128, .3);
+    width: 70%;
+    height: 100%;
+    padding: 10px;
+}
+.app__comments {
+    position: relative;
+    width: 30%;
+}
+
+/*# sourceMappingURL=styles.css.map*/

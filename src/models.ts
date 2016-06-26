@@ -20,4 +20,5 @@ interface State {
 	activeComment: string;
 	selection?: Comment;
 	paragraphs: Paragraph[];
+    savedToStorageAt: number;
 }

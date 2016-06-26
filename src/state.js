@@ -1,7 +1,15 @@
+export const STORAGE_NAME = 'story-editor-comments';
+
+
+let comments = window.localStorage.getItem(STORAGE_NAME);
+
+comments = comments ? JSON.parse(comments) : [];
+
 export const initialState = {
     selection: null,
     activeComment: null,
-    comments: [],
+    comments,
+    savedToStorageAt: null,
 
    	paragraphs: [
 		{

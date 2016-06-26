@@ -39,11 +39,3 @@ export const commentTextChanged = (commentId, text) => {
         text
     };
 };
-
-export const SAVED_TO_STORAGE = 'SAVED_TO_STORAGE';
-export const savedToStorage = (timestamp) => {
-    return {
-        type: SAVED_TO_STORAGE,
-        savedToStorageAt: timestamp,
-    };
-};

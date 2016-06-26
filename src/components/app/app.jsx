@@ -11,9 +11,6 @@ import { CommentPopup } from '../comment-popup/comment-popup';
 import { connect } from 'react-redux';
 import { savedToStorage } from '../../actions';
 
-const DUMP_TO_STORAGE_IN_SEC = 20;
-import { STORAGE_NAME } from '../../state';
-
 export const App = connect(
     state => {
         return {
@@ -24,11 +21,6 @@ export const App = connect(
         };
     }
 )(({ comments, activeComment, selection, savedToStorageAt, dispatch }) => {
-    if (typeof window !== undefined && !savedToStorageAt || Date.now() - savedToStorageAt > DUMP_TO_STORAGE_IN_SEC) {
-        window.localStorage.setItem(STORAGE_NAME, JSON.stringify(comments));
-        dispatch(savedToStorage(Date.now()));
-    }
-
     let currentComment;
     if (selection) {
         currentComment = selection;
@@ -40,7 +32,7 @@ export const App = connect(
         <div className={ cl('text') }><Text/></div>
         <div className={ cl('comments') }>
             {
-                comments.map(c => <Comment comment={ c } />)
+                comments.map(c => <Comment key={ c.id } comment={ c } />)
             }
             <CommentPopup comment={ currentComment } />
         </div>

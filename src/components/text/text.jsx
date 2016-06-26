@@ -87,7 +87,7 @@ export const Text = connect(
     return <div className={ cl }>
         {
             paragraphs.map(p => {
-                return <p id={ p.id } onMouseUp={ handleTextSelected.bind(null, p.id, dispatch) }>{ p.text }</p>;
+                return <p id={ p.id } key={ p.id } onMouseUp={ handleTextSelected.bind(null, p.id, dispatch) }>{ p.text }</p>;
             })
         }
     </div>

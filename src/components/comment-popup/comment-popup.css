@@ -1,0 +1,28 @@
+.comment-popup {
+    position: absolute;
+    top: 30px;
+    left: 10px;
+    display: none;
+    z-index: 110;
+    border: 1px solid rgba(128, 128, 128, .5);
+    padding: 10px;
+    border-radius: 4px;
+    background: white;
+    transition: top 0.5s ease;
+
+    &_opened {
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__comment {
+        width: 200px;
+        height: 80px;
+    }
+
+    &__save {
+        width: 60px;
+        height: 30px;
+        margin-top: 10px
+    }
+}

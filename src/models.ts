@@ -6,6 +6,7 @@ interface Comment {
     textStart: number;
     textEnd: number;
 	paragraphId: string;
+    createdAt: number;
 }
 
 interface Paragraph {
@@ -15,7 +16,8 @@ interface Paragraph {
 
 interface State {
 	comments: Comment[];
+    // comment ID
 	activeComment: string;
-	addComment?: Comment;
+	selection?: Comment;
 	paragraphs: Paragraph[];
 }

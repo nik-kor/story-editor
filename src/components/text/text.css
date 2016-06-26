@@ -1,0 +1,5 @@
+.text {
+    &__highlight {
+        background-color: rgba(97,255,160,.8);
+    }
+}

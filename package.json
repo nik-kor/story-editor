@@ -1,8 +1,7 @@
 {
   "name": "inkitt-app",
   "version": "1.0.0",
-  "description": "- highlight selected text if user click on textarea  - open textarea against selected text  - add save button   - save to localStorage  - render already added comments",
-  "main": "app.js",
+  "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack-dev-server --hot --inline",
@@ -12,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "bem-cn": "^2.1.2",
+    "moment": "^2.13.0",
     "node-uuid": "^1.4.7",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",

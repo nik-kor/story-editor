@@ -36,7 +36,7 @@ module.exports = {
 			path.join(__dirname, 'node_modules')
 		]
 	},
-	devtools: 'source-map',
+	devtool: 'source-map',
 	resolve: {
 		root: [
 			path.join(__dirname, 'node_modules'),

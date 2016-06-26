@@ -1,7 +1,7 @@
 export const initialState = {
-    addComment: null,
+    selection: null,
     activeComment: null,
-    comments: null,
+    comments: [],
 
    	paragraphs: [
 		{

@@ -1,27 +1,97 @@
 import React from 'react';
 import cn from 'bem-cn';
 import { connect } from 'react-redux';
-    // state => {
-    //     return {};
-    // },
-    // dispatch => {
-    //     return { dispatch };
-    // }
-    //
+import { textSelected } from '../../actions';
+
+const cl = cn('text');
+
+require('./text.css');
+
+function getSelectionPosition() {
+    let selection = window.getSelection();
+
+    if (selection.rangeCount === 0) {
+        return null;
+    }
+
+    let range = window.getSelection().getRangeAt(0);
+    let dummy = document.createElement('span');
+    range.insertNode(dummy);
+    var offsetTop = dummy.offsetTop;
+
+    dummy.parentNode.removeChild(dummy);
+
+
+    // var highlightDiv = document.createElement('span');
+    // highlightDiv.style.backgroundColor = 'blue';
+    // range.surroundContents(highlightDiv);
+
+    return { offsetTop, textStart: selection.baseOffset, textEnd: selection.extentOffset };
+}
+
+const getParagraphsWithHighlight = (paragraphs, comment) => {
+    let paragraph = Object.assign({}, paragraphs.find(p => p.id === comment.paragraphId));
+
+    paragraph.text = [
+        paragraph.text.slice(0, comment.textStart),
+        <span className={ cl('highlight') }>{ paragraph.text.slice(comment.textStart, comment.textEnd) }</span>,
+        paragraph.text.slice(comment.textEnd)
+    ];
+
+    paragraphs = paragraphs.map(p => {
+        if (p.id === paragraph.id) {
+            return paragraph;
+        }
+
+        return p;
+    });
+
+    return paragraphs;
+};
+
+const handleTextSelected = (...args) => {
+    args[1](
+        textSelected(Object.assign({ paragraphId: args[0] }, getSelectionPosition()))
+    );
+};
 
 export const Text = connect(
-    (state) => {
+    state => {
         return {
-            paragraphs: state.paragraphs
+            paragraphs: state.paragraphs,
+            activeComment: state.activeComment,
+            comments: state.comments,
+            selection: state.selection,
         }
+    },
+    dispatch => {
+        return { dispatch };
     }
-)(({ paragraphs }) =>  {
-    console.log(paragraphs);
+)(({ paragraphs, activeComment, comments, selection, dispatch }) =>  {
+    if (activeComment) {
+        if (selection && selection.id === activeComment) {
+            // var rangeNode = document.getElementById(selection.paragraphId).firstChild;
+            // var highlightDiv = document.createElement('span');
+            // highlightDiv.style.backgroundColor = 'blue';
 
-    return <div className={ cn('text') }>
+            // var range = document.createRange();
+            // range.setStart(rangeNode, selection.textStart);
+            // range.setEnd(rangeNode, selection.textEnd);
+            // range.surroundContents(highlightDiv);
+            paragraphs = getParagraphsWithHighlight(paragraphs, selection);
+        } else {
+            let comment = comments.find(c => c.id === activeComment);
+            if (comment) {
+                paragraphs = getParagraphsWithHighlight(paragraphs, comment);
+            }
+        }
+
+    }
+
+    return <div className={ cl }>
         {
             paragraphs.map(p => {
-                return <p>{ p.text }</p>;
+                return <p id={ p.id } onMouseUp={ handleTextSelected.bind(null, p.id, dispatch) }>{ p.text }</p>;
             })
         }
     </div>

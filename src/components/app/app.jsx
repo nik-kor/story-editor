@@ -14,16 +14,25 @@ export const App = connect(
     state => {
         return {
             comments: state.comments,
+            activeComment: state.activeComment,
+            selection: state.selection
         };
     }
-)(({ comments }) => {
+)(({ comments, activeComment, selection }) => {
+    let currentComment;
+    if (selection) {
+        currentComment = selection;
+    } else if(activeComment) {
+        currentComment = comments.find(c => c.id === activeComment);
+    }
+
     return <div className={ cl() }>
         <div className={ cl('text') }><Text/></div>
         <div className={ cl('comments') }>
             {
                 comments.map(c => <Comment comment={ c } />)
             }
-            <CommentPopup />
+            <CommentPopup comment={ currentComment } />
         </div>
     </div>;
 })

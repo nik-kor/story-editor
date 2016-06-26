@@ -10,23 +10,19 @@ require('./text.css');
 function getSelectionPosition() {
     let selection = window.getSelection();
 
-    if (selection.rangeCount === 0) {
+    if (selection.rangeCount === 0 || selection.baseOffset === selection.focusOffset) {
         return null;
     }
 
     let range = window.getSelection().getRangeAt(0);
+    let { startOffset, endOffset } = range;
     let dummy = document.createElement('span');
     range.insertNode(dummy);
     var offsetTop = dummy.offsetTop;
 
     dummy.parentNode.removeChild(dummy);
 
-
-    // var highlightDiv = document.createElement('span');
-    // highlightDiv.style.backgroundColor = 'blue';
-    // range.surroundContents(highlightDiv);
-
-    return { offsetTop, textStart: selection.baseOffset, textEnd: selection.extentOffset };
+    return { offsetTop, textStart: startOffset, textEnd: endOffset };
 }
 
 const getParagraphsWithHighlight = (paragraphs, comment) => {

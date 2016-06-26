@@ -79,14 +79,24 @@
 	
 	var _app = __webpack_require__(193);
 	
-	var _reducers = __webpack_require__(313);
+	var _reducers = __webpack_require__(312);
 	
-	var _state = __webpack_require__(310);
+	var _state = __webpack_require__(336);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var middleware = [(0, _reduxLogger2.default)()];
 	var store = (0, _redux.createStore)(_reducers.reducer, _state.initialState, _redux.applyMiddleware.apply(undefined, middleware));
+	
+	var currentState = store.getState().comments;
+	store.subscribe(function () {
+	    var newState = store.getState().comments;
+	
+	    if (newState.length !== currentState.length) {
+	        window.localStorage.setItem(_state.STORAGE_NAME, JSON.stringify(newState));
+	        currentState = newState;
+	    }
+	});
 	
 	_reactDom2.default.render(_react2.default.createElement(
 	    _reactRedux.Provider,
@@ -22183,8 +22193,6 @@
 	});
 	exports.App = undefined;
 	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-	
 	var _react = __webpack_require__(3);
 	
 	var _react2 = _interopRequireDefault(_react);
@@ -22203,15 +22211,12 @@
 	
 	var _actions = __webpack_require__(196);
 	
-	var _state = __webpack_require__(310);
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var cl = (0, _bemCn2.default)('app');
 	
-	__webpack_require__(311);
+	__webpack_require__(310);
 	
-	var DUMP_TO_STORAGE_IN_SEC = 20;
 	var App = exports.App = (0, _reactRedux.connect)(function (state) {
 	    return {
 	        comments: state.comments,
@@ -22225,11 +22230,6 @@
 	    var selection = _ref.selection;
 	    var savedToStorageAt = _ref.savedToStorageAt;
 	    var dispatch = _ref.dispatch;
-	
-	    if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) !== undefined && !savedToStorageAt || Date.now() - savedToStorageAt > DUMP_TO_STORAGE_IN_SEC) {
-	        window.localStorage.setItem(_state.STORAGE_NAME, JSON.stringify(comments));
-	        dispatch((0, _actions.savedToStorage)(Date.now()));
-	    }
 	
 	    var currentComment = void 0;
 	    if (selection) {
@@ -22252,7 +22252,7 @@
 	            'div',
 	            { className: cl('comments') },
 	            comments.map(function (c) {
-	                return _react2.default.createElement(_comment.Comment, { comment: c });
+	                return _react2.default.createElement(_comment.Comment, { key: c.id, comment: c });
 	            }),
 	            _react2.default.createElement(_commentPopup.CommentPopup, { comment: currentComment })
 	        )
@@ -22796,7 +22796,7 @@
 	        paragraphs.map(function (p) {
 	            return _react2.default.createElement(
 	                'p',
-	                { id: p.id, onMouseUp: handleTextSelected.bind(null, p.id, dispatch) },
+	                { id: p.id, key: p.id, onMouseUp: handleTextSelected.bind(null, p.id, dispatch) },
 	                p.text
 	            );
 	        })
@@ -22851,14 +22851,6 @@
 	    return {
 	        type: COMMENT_TEXT_CHANGED,
 	        text: text
-	    };
-	};
-	
-	var SAVED_TO_STORAGE = exports.SAVED_TO_STORAGE = 'SAVED_TO_STORAGE';
-	var savedToStorage = exports.savedToStorage = function savedToStorage(timestamp) {
-	    return {
-	        type: SAVED_TO_STORAGE,
-	        savedToStorageAt: timestamp
 	    };
 	};
 
@@ -36813,59 +36805,11 @@
 /* 310 */
 /***/ function(module, exports) {
 
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	var STORAGE_NAME = exports.STORAGE_NAME = 'story-editor-comments';
-	
-	var comments = window.localStorage.getItem(STORAGE_NAME);
-	
-	comments = comments ? JSON.parse(comments) : [];
-	
-	var initialState = exports.initialState = {
-		selection: null,
-		activeComment: null,
-		comments: comments,
-		savedToStorageAt: null,
-	
-		paragraphs: [{
-			id: '1',
-			text: 'Hackathon in Yandex. How it was'
-		}, {
-			id: '2',
-			text: 'A week ago I took part in the hackathon in Yandex. It was a small and local(for Yandex) one, only\n\tfor yandexoids and friends. It was a very technical hackathon about tools for developers like loaders, builders, template\n\tengines. So developers were doing something for themselves.'
-		}, {
-			id: '3',
-			text: 'So how did I get there if I’m not a yandexoid — my college Anton invited me because we were doing\nstuff related to Yandex on my current job. It’s an interesting project — I’ll say a few words about it later — but I couldn’t\nfind time for it because of other duties. So this hackathon became a great opportunity to find the time and complete the project.'
-		}, {
-			id: '4',
-			text: 'A few words about our project. BEMXJST is a declarative template engine, very flexible and powerful.\nSo you can describe some structures using logic and domain-specific functions. Also, there is another engine BEMHTML\nthat takes BEMXJST-templates and BEMJSON(simply a subset of JSON) and after some magic we get HTML. So on my current\njob we have a library of UI components that uses BEMXJST and BEMHTML. We also have a library based on React renderer.\nThe libraries have to be equal in functionality and appearance — so there has to be no difference for users. The main\nidea is somehow to tell React-lib to use BEMXJST-templates in its render function. This will give us the ability to\ndevelop markup in one place and not copy-paste it. It’s possible to implement another engine that works like BEMHTML\nbut outputs data structures fittable for creating virtual-DOM. That’s how the React render function works — it doesn’t\nproduce a real DOM but a structure that describes DOM so it can compare it with the real one and then decide is it\nrequired to update the real DOM. That’s why we called our engine VIDOM.'
-		}, {
-			id: '5',
-			text: 'Before the hackathon, we checked the idea and created some POC and I can say that it was almost\nready and almost all the tests were green. But the code base was awful and there were bugs and we didn’t check all\nthe edge cases. So the goal for the hackathon was to complete the project and make it possible to merge into upstream.'
-		}, {
-			id: '6',
-			text: 'I love hackathons because of their magic. Just imagine the Saturday morning, you want to relax and\nyour body is tired and then you came to the place with a lot of people who are also tired but they want to work and\nthey have the ideas and passion for doing it and it’s really the thing that motivates me. So I was full of energy for\nthe whole weekend. Also, it’s a great pleasure to hang out and just work together, it’s great fun definitely.'
-		}, {
-			id: '7',
-			text: 'This particular hackathon was great for me because it was about tools and I’m interested in it. I\nlike that there were no prizes or ratings or stuff like that. I believe that money or other prizes break the idea because\nwhat really matters is the pleasure of doing some stuff with friends and what you get at the end. And this is the real prize.\nI also felt the engineering culture that exists in Yandex and it’s great.'
-		}, {
-			id: '8',
-			text: 'Finally, we’ve done our tasks and created a pull request for the main project.\nMore detail here in Russian https://github.com/bem/bem-forum-content-ru/issues/961.'
-		}]
-	};
-
-/***/ },
-/* 311 */
-/***/ function(module, exports) {
-
 	// removed by extract-text-webpack-plugin
 
 /***/ },
-/* 312 */,
-/* 313 */
+/* 311 */,
+/* 312 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36877,7 +36821,7 @@
 	
 	var _actions = __webpack_require__(196);
 	
-	var uuid = __webpack_require__(314);
+	var uuid = __webpack_require__(313);
 	
 	var reducer = exports.reducer = function reducer(state, action) {
 	
@@ -36893,8 +36837,6 @@
 	            return onCommentTextChanged(state, action);
 	        case _actions.ADD_COMMENT:
 	            return onAddComment(state, action);
-	        case _actions.SAVED_TO_STORAGE:
-	            return onSavedToStorage(state, action);
 	        default:
 	            return state;
 	    }
@@ -36935,14 +36877,10 @@
 	    function onMuteComment(state, action) {
 	        return Object.assign({}, state, { activeComment: null });
 	    }
-	
-	    function onSavedToStorage(state, action) {
-	        return Object.assign({}, state, { savedToStorageAt: action.savedToStorageAt });
-	    }
 	};
 
 /***/ },
-/* 314 */
+/* 313 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(Buffer) {//     uuid.js
@@ -37003,7 +36941,7 @@
 	    // Moderately fast, high quality
 	    if (true) {
 	      try {
-	        var _rb = __webpack_require__(319).randomBytes;
+	        var _rb = __webpack_require__(318).randomBytes;
 	        _nodeRNG = _rng = _rb && function() {return _rb(16);};
 	        _rng();
 	      } catch(e) {}
@@ -37218,10 +37156,10 @@
 	  }
 	})('undefined' !== typeof window ? window : null);
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(315).Buffer))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(314).Buffer))
 
 /***/ },
-/* 315 */
+/* 314 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(Buffer, global) {/*!
@@ -37234,9 +37172,9 @@
 	
 	'use strict'
 	
-	var base64 = __webpack_require__(316)
-	var ieee754 = __webpack_require__(317)
-	var isArray = __webpack_require__(318)
+	var base64 = __webpack_require__(315)
+	var ieee754 = __webpack_require__(316)
+	var isArray = __webpack_require__(317)
 	
 	exports.Buffer = Buffer
 	exports.SlowBuffer = SlowBuffer
@@ -38773,10 +38711,10 @@
 	  return i
 	}
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(315).Buffer, (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(314).Buffer, (function() { return this; }())))
 
 /***/ },
-/* 316 */
+/* 315 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
@@ -38906,7 +38844,7 @@
 
 
 /***/ },
-/* 317 */
+/* 316 */
 /***/ function(module, exports) {
 
 	exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -38996,7 +38934,7 @@
 
 
 /***/ },
-/* 318 */
+/* 317 */
 /***/ function(module, exports) {
 
 	var toString = {}.toString;
@@ -39007,10 +38945,10 @@
 
 
 /***/ },
-/* 319 */
+/* 318 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(Buffer) {var rng = __webpack_require__(320)
+	/* WEBPACK VAR INJECTION */(function(Buffer) {var rng = __webpack_require__(319)
 	
 	function error () {
 	  var m = [].slice.call(arguments).join(' ')
@@ -39021,9 +38959,9 @@
 	    ].join('\n'))
 	}
 	
-	exports.createHash = __webpack_require__(322)
+	exports.createHash = __webpack_require__(321)
 	
-	exports.createHmac = __webpack_require__(334)
+	exports.createHmac = __webpack_require__(333)
 	
 	exports.randomBytes = function(size, callback) {
 	  if (callback && callback.call) {
@@ -39044,7 +38982,7 @@
 	  return ['sha1', 'sha256', 'sha512', 'md5', 'rmd160']
 	}
 	
-	var p = __webpack_require__(335)(exports)
+	var p = __webpack_require__(334)(exports)
 	exports.pbkdf2 = p.pbkdf2
 	exports.pbkdf2Sync = p.pbkdf2Sync
 	
@@ -39064,16 +39002,16 @@
 	  }
 	})
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(315).Buffer))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(314).Buffer))
 
 /***/ },
-/* 320 */
+/* 319 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, Buffer) {(function() {
 	  var g = ('undefined' === typeof window ? global : window) || {}
 	  _crypto = (
-	    g.crypto || g.msCrypto || __webpack_require__(321)
+	    g.crypto || g.msCrypto || __webpack_require__(320)
 	  )
 	  module.exports = function(size) {
 	    // Modern Browsers
@@ -39097,22 +39035,22 @@
 	  }
 	}())
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(315).Buffer))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(314).Buffer))
 
 /***/ },
-/* 321 */
+/* 320 */
 /***/ function(module, exports) {
 
 	/* (ignored) */
 
 /***/ },
-/* 322 */
+/* 321 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(Buffer) {var createHash = __webpack_require__(323)
+	/* WEBPACK VAR INJECTION */(function(Buffer) {var createHash = __webpack_require__(322)
 	
-	var md5 = toConstructor(__webpack_require__(331))
-	var rmd160 = toConstructor(__webpack_require__(333))
+	var md5 = toConstructor(__webpack_require__(330))
+	var rmd160 = toConstructor(__webpack_require__(332))
 	
 	function toConstructor (fn) {
 	  return function () {
@@ -39140,10 +39078,10 @@
 	  return createHash(alg)
 	}
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(315).Buffer))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(314).Buffer))
 
 /***/ },
-/* 323 */
+/* 322 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var exports = module.exports = function (alg) {
@@ -39152,16 +39090,16 @@
 	  return new Alg()
 	}
 	
-	var Buffer = __webpack_require__(315).Buffer
-	var Hash   = __webpack_require__(324)(Buffer)
+	var Buffer = __webpack_require__(314).Buffer
+	var Hash   = __webpack_require__(323)(Buffer)
 	
-	exports.sha1 = __webpack_require__(325)(Buffer, Hash)
-	exports.sha256 = __webpack_require__(329)(Buffer, Hash)
-	exports.sha512 = __webpack_require__(330)(Buffer, Hash)
+	exports.sha1 = __webpack_require__(324)(Buffer, Hash)
+	exports.sha256 = __webpack_require__(328)(Buffer, Hash)
+	exports.sha512 = __webpack_require__(329)(Buffer, Hash)
 
 
 /***/ },
-/* 324 */
+/* 323 */
 /***/ function(module, exports) {
 
 	module.exports = function (Buffer) {
@@ -39244,7 +39182,7 @@
 
 
 /***/ },
-/* 325 */
+/* 324 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -39256,7 +39194,7 @@
 	 * See http://pajhome.org.uk/crypt/md5 for details.
 	 */
 	
-	var inherits = __webpack_require__(326).inherits
+	var inherits = __webpack_require__(325).inherits
 	
 	module.exports = function (Buffer, Hash) {
 	
@@ -39388,7 +39326,7 @@
 
 
 /***/ },
-/* 326 */
+/* 325 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -39916,7 +39854,7 @@
 	}
 	exports.isPrimitive = isPrimitive;
 	
-	exports.isBuffer = __webpack_require__(327);
+	exports.isBuffer = __webpack_require__(326);
 	
 	function objectToString(o) {
 	  return Object.prototype.toString.call(o);
@@ -39960,7 +39898,7 @@
 	 *     prototype.
 	 * @param {function} superCtor Constructor function to inherit prototype from.
 	 */
-	exports.inherits = __webpack_require__(328);
+	exports.inherits = __webpack_require__(327);
 	
 	exports._extend = function(origin, add) {
 	  // Don't do anything if add isn't an object
@@ -39981,7 +39919,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(5)))
 
 /***/ },
-/* 327 */
+/* 326 */
 /***/ function(module, exports) {
 
 	module.exports = function isBuffer(arg) {
@@ -39992,7 +39930,7 @@
 	}
 
 /***/ },
-/* 328 */
+/* 327 */
 /***/ function(module, exports) {
 
 	if (typeof Object.create === 'function') {
@@ -40021,7 +39959,7 @@
 
 
 /***/ },
-/* 329 */
+/* 328 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -40033,7 +39971,7 @@
 	 *
 	 */
 	
-	var inherits = __webpack_require__(326).inherits
+	var inherits = __webpack_require__(325).inherits
 	
 	module.exports = function (Buffer, Hash) {
 	
@@ -40174,10 +40112,10 @@
 
 
 /***/ },
-/* 330 */
+/* 329 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var inherits = __webpack_require__(326).inherits
+	var inherits = __webpack_require__(325).inherits
 	
 	module.exports = function (Buffer, Hash) {
 	  var K = [
@@ -40424,7 +40362,7 @@
 
 
 /***/ },
-/* 331 */
+/* 330 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -40436,7 +40374,7 @@
 	 * See http://pajhome.org.uk/crypt/md5 for more info.
 	 */
 	
-	var helpers = __webpack_require__(332);
+	var helpers = __webpack_require__(331);
 	
 	/*
 	 * Calculate the MD5 of an array of little-endian words, and a bit length
@@ -40585,7 +40523,7 @@
 
 
 /***/ },
-/* 332 */
+/* 331 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(Buffer) {var intSize = 4;
@@ -40623,10 +40561,10 @@
 	
 	module.exports = { hash: hash };
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(315).Buffer))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(314).Buffer))
 
 /***/ },
-/* 333 */
+/* 332 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(Buffer) {
@@ -40835,13 +40773,13 @@
 	
 	
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(315).Buffer))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(314).Buffer))
 
 /***/ },
-/* 334 */
+/* 333 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(Buffer) {var createHash = __webpack_require__(322)
+	/* WEBPACK VAR INJECTION */(function(Buffer) {var createHash = __webpack_require__(321)
 	
 	var zeroBuffer = new Buffer(128)
 	zeroBuffer.fill(0)
@@ -40885,13 +40823,13 @@
 	}
 	
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(315).Buffer))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(314).Buffer))
 
 /***/ },
-/* 335 */
+/* 334 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var pbkdf2Export = __webpack_require__(336)
+	var pbkdf2Export = __webpack_require__(335)
 	
 	module.exports = function (crypto, exports) {
 	  exports = exports || {}
@@ -40906,7 +40844,7 @@
 
 
 /***/ },
-/* 336 */
+/* 335 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(Buffer) {module.exports = function(crypto) {
@@ -40994,7 +40932,51 @@
 	  }
 	}
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(315).Buffer))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(314).Buffer))
+
+/***/ },
+/* 336 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var STORAGE_NAME = exports.STORAGE_NAME = 'story-editor-comments';
+	var comments = window.localStorage.getItem(STORAGE_NAME);
+	comments = comments ? JSON.parse(comments) : [];
+	
+	var initialState = exports.initialState = {
+		selection: null,
+		activeComment: null,
+		comments: comments,
+		paragraphs: [{
+			id: '1',
+			text: 'Hackathon in Yandex. How it was'
+		}, {
+			id: '2',
+			text: 'A week ago I took part in the hackathon in Yandex. It was a small and local(for Yandex) one, only\n\tfor yandexoids and friends. It was a very technical hackathon about tools for developers like loaders, builders, template\n\tengines. So developers were doing something for themselves.'
+		}, {
+			id: '3',
+			text: 'So how did I get there if I’m not a yandexoid — my college Anton invited me because we were doing\nstuff related to Yandex on my current job. It’s an interesting project — I’ll say a few words about it later — but I couldn’t\nfind time for it because of other duties. So this hackathon became a great opportunity to find the time and complete the project.'
+		}, {
+			id: '4',
+			text: 'A few words about our project. BEMXJST is a declarative template engine, very flexible and powerful.\nSo you can describe some structures using logic and domain-specific functions. Also, there is another engine BEMHTML\nthat takes BEMXJST-templates and BEMJSON(simply a subset of JSON) and after some magic we get HTML. So on my current\njob we have a library of UI components that uses BEMXJST and BEMHTML. We also have a library based on React renderer.\nThe libraries have to be equal in functionality and appearance — so there has to be no difference for users. The main\nidea is somehow to tell React-lib to use BEMXJST-templates in its render function. This will give us the ability to\ndevelop markup in one place and not copy-paste it. It’s possible to implement another engine that works like BEMHTML\nbut outputs data structures fittable for creating virtual-DOM. That’s how the React render function works — it doesn’t\nproduce a real DOM but a structure that describes DOM so it can compare it with the real one and then decide is it\nrequired to update the real DOM. That’s why we called our engine VIDOM.'
+		}, {
+			id: '5',
+			text: 'Before the hackathon, we checked the idea and created some POC and I can say that it was almost\nready and almost all the tests were green. But the code base was awful and there were bugs and we didn’t check all\nthe edge cases. So the goal for the hackathon was to complete the project and make it possible to merge into upstream.'
+		}, {
+			id: '6',
+			text: 'I love hackathons because of their magic. Just imagine the Saturday morning, you want to relax and\nyour body is tired and then you came to the place with a lot of people who are also tired but they want to work and\nthey have the ideas and passion for doing it and it’s really the thing that motivates me. So I was full of energy for\nthe whole weekend. Also, it’s a great pleasure to hang out and just work together, it’s great fun definitely.'
+		}, {
+			id: '7',
+			text: 'This particular hackathon was great for me because it was about tools and I’m interested in it. I\nlike that there were no prizes or ratings or stuff like that. I believe that money or other prizes break the idea because\nwhat really matters is the pleasure of doing some stuff with friends and what you get at the end. And this is the real prize.\nI also felt the engineering culture that exists in Yandex and it’s great.'
+		}, {
+			id: '8',
+			text: 'Finally, we’ve done our tasks and created a pull request for the main project.\nMore detail here in Russian https://github.com/bem/bem-forum-content-ru/issues/961.'
+		}]
+	};
 
 /***/ }
 /******/ ]);
